@@ -117,3 +117,12 @@ Install `morgan` for logging and its types:
 npm i -S morgan
 npm i -D @types/morgan
 ```
+
+## Swagger integration
+
+Download dependencies:
+```bash
+npm i -S tsoa swagger-ui-express
+npm i -D @types/swagger-ui-express concurrently
+```
+
