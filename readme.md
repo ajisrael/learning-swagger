@@ -77,3 +77,43 @@ Build JS code with following command:
 npm run build
 
 ```
+
+Run JS code:
+```bash
+node ./build/index.js
+```
+
+## Configure development environment
+
+Install some more QoL dev dependencies:
+```bash
+npm i -D ts-node nodemon
+```
+
+Add dev script and configuration for nodemon to `package.json`:
+```json
+"scripts": {
+    "build": "tsc",
+    "dev": "nodemon",
+  },
+
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "exec": "ts-node src/index.ts"
+  }
+```
+
+Run dev script:
+```bash
+npm run dev
+```
+
+## Add middleware
+Install `morgan` for logging and its types:
+```bash
+npm i -S morgan
+npm i -D @types/morgan
+```
