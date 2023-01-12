@@ -177,3 +177,78 @@ Build and run server:
 npm run build
 npm run dev
 ```
+
+# Adding Docker
+
+## Create Docker File
+
+To Dockerize the server, we need to create a Dockerfile. A Dockerfile is just a list of instructions to create a docker image. Read more about Dockerfile [here](https://docs.docker.com/engine/reference/builder/)
+
+```dockerfile
+FROM node:12
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["npm", "run", "dev"]
+```
+
+Add `.dockerignore`:
+
+```
+node_modules
+npm-debug.log
+```
+
+## Create Docker Image
+
+After creating the Dockerfile, we need to run the docker build to create a docker image from the Dockerfile. Here we are naming the docker image as express-ts.
+
+```bash
+docker build -t express-ts .
+```
+
+Verify image created
+
+```bash
+docker images
+```
+
+Run docker image
+
+```bash
+docker run -p 8000:8000 express-ts
+```
+
+## Add Docker Compose
+
+We need to mount the local src folder to the docker container folder, so every time we make any change inside the src folder, nodemon restarts the development server inside the docker container.
+
+We will add the docker-compose.yml file to the root of the project to mount the local src folder. Read more about docker-compose [here](https://docs.docker.com/compose/)
+
+```yml
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app/src
+    ports:
+      - '8000:8000'
+```
+
+Run docker compose
+
+```bash
+docker-compose up
+```
