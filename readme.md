@@ -180,6 +180,8 @@ npm run dev
 
 # Adding Docker
 
+Following tutorial from [rsbh](https://rsbh.dev/blogs/rest-api-express-typescript-docker)
+
 ## Create Docker File
 
 To Dockerize the server, we need to create a Dockerfile. A Dockerfile is just a list of instructions to create a docker image. Read more about Dockerfile [here](https://docs.docker.com/engine/reference/builder/)
@@ -251,4 +253,48 @@ Run docker compose
 
 ```bash
 docker-compose up
+```
+
+## Create Docker Files for each ENV
+
+Change the existing `dockerfile` to `dockerfile.dev` and update `docker-compose.yml`, then create a new `dockerfile` for production env.
+
+Build new `dockerfile` with following command:
+
+```bash
+docker build -t express-ts/alpine .
+```
+
+Now we need to optimize our production image.
+
+Here we create two stages, one for building the server and the other for running the server. In the builder stage, we generate Javascript code from the Typescript files. Then in the server stage, we copy the generated files from the builder stage to the server stage. In the Server stage, we need only production dependencies, that's why we will pass the --production flag to the npm install command.
+
+```dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM node:18-alpine AS server
+WORKDIR /app
+COPY package* ./
+RUN npm install --production
+COPY --from=builder ./app/public ./public
+COPY --from=builder ./app/build ./build
+EXPOSE 8000
+CMD ["npm", "start"]
+```
+
+Build new multi-staged (ms) docker image
+
+```bash
+docker build -t express-ts/ms .
+```
+
+Check images:
+
+```bash
+docker images
 ```
