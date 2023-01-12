@@ -79,6 +79,7 @@ npm run build
 ```
 
 Run JS code:
+
 ```bash
 node ./build/index.js
 ```
@@ -86,11 +87,13 @@ node ./build/index.js
 ## Configure development environment
 
 Install some more QoL dev dependencies:
+
 ```bash
 npm i -D ts-node nodemon
 ```
 
 Add dev script and configuration for nodemon to `package.json`:
+
 ```json
 "scripts": {
     "build": "tsc",
@@ -107,12 +110,15 @@ Add dev script and configuration for nodemon to `package.json`:
 ```
 
 Run dev script:
+
 ```bash
 npm run dev
 ```
 
 ## Add middleware
+
 Install `morgan` for logging and its types:
+
 ```bash
 npm i -S morgan
 npm i -D @types/morgan
@@ -121,8 +127,53 @@ npm i -D @types/morgan
 ## Swagger integration
 
 Download dependencies:
+
 ```bash
 npm i -S tsoa swagger-ui-express
 npm i -D @types/swagger-ui-express concurrently
 ```
 
+Add support for decorators in `tsconfig.json`
+
+```json
+{
+  "compilerOptions": {
+    ...
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
+```
+
+Create config file for tsoa: `tsoa.json`
+
+```json
+{
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "spec": {
+    "outputDirectory": "public",
+    "specVersion": 3
+  }
+}
+```
+
+Update scripts:
+
+```json
+"scripts": {
+    "start": "node build/index.js",
+    "predev": "npm run swagger",
+    "prebuild": "npm run swagger",
+    "build": "tsc",
+    "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec\"",
+    "swagger": "tsoa spec",
+  },
+```
+
+Build and run server:
+
+```bash
+npm run build
+npm run dev
+```
