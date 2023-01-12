@@ -293,8 +293,61 @@ Build new multi-staged (ms) docker image
 docker build -t express-ts/ms .
 ```
 
-Check images:
+Compare image sizes:
 
 ```bash
 docker images
+```
+
+# Add PostgreSQL to API
+
+Following tutorial by [rsbh](https://rsbh.dev/blogs/rest-api-express-postgres-typeorm)
+
+## Install PostgreSQL and TypeORM
+
+ORM (Object Relational Mapping) will be used to map objects and their relationships for getting information from our relational database.
+
+Install command for typeorm and postgresql driver:
+
+```bash
+npm install typeorm reflect-metadata --save
+npm install pg --save
+```
+
+## Setup Postgres database
+
+Update `docker-compose.yml` to have a database service and mark that as a dependency of the app.
+
+```yml
+version: '3'
+
+services:
+  db:
+    image: postgres:12
+    environment:
+      - POSTGRES_DB=express-ts
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./src:/app/src
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_DB=express-ts
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+```
+
+Build and run container:
+
+```bash
+docker-compose build
+docker-compose up
 ```
