@@ -351,3 +351,15 @@ Build and run container:
 docker-compose build
 docker-compose up
 ```
+
+## Verify Database schema
+
+Once we add the models to the server and start it, the tables will be created in the database. We can verify it by executing the bash command to the running docker container. In the docker container, we have to run the psql cli.
+
+```bash
+docker exec -it express-typescript_db_1 bash
+```
+
+```bash
+psql -U postgres
+```
